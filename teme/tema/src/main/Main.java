@@ -1,19 +1,38 @@
 package main;
 
 import checker.Checker;
+import Class.Card;
+import Class.Deck;
+import Class.Hero;
+import Class.Minion;
+import Class.Game;
+import Class.StartGame;
+import Class.Action;
+import Class.Player;
+
+import java.util.ArrayList;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import checker.CheckerConstants;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.Input;
+import fileio.DecksInput;
+import fileio.CardInput;
+import fileio.ActionsInput;
+import fileio.Coordinates;
+import fileio.GameInput;
+import fileio.StartGameInput;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Random;
 
 /**
  * The entry point to this homework. It runs the checker that tests your implentation.
@@ -28,6 +47,7 @@ public final class Main {
     /**
      * DO NOT MODIFY MAIN METHOD
      * Call the checker
+     *
      * @param args from command line
      * @throws IOException in case of exceptions to reading / writing
      */
@@ -87,6 +107,19 @@ public final class Main {
          * output.add(objectNode);
          *
          */
+        Player playerOne = new Player();
+        Player playerTwo = new Player();
+
+        DecksInput playerOneDecks = inputData.getPlayerOneDecks();
+        playerOne.setDecks(playerOneDecks);
+        DecksInput playerTwoDecks = inputData.getPlayerTwoDecks();
+        playerTwo.setDecks(playerTwoDecks);
+
+        ArrayList<GameInput> games = inputData.getGames();
+        for (int i=0;i<games.size();i++) {
+            Game game = new Game(games.get(i));
+            game.RunGame(playerOne, playerTwo, output);
+        }
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), output);

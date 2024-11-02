@@ -1,74 +1,42 @@
-# Homeworks
-
-This repository contains (and is updated each university year):
-
- * content of each homework with detailed explanations of the assignments and automated checkers
- * media, such as photos or diagrams, that are used to better portrait examples as well as sources (where need-be - e.g. the UML diagrams can be exported to XML from [draw.io](https://www.draw.io/))
- * skeletons for homeworks which require a starting point
-
-## Repository folder structure
-
-The structure for a current homework is as follows:
-```
-teme
-|
-|	--->	homework*X*-name  [1]
-|		|	--->	checker  [2]
-|		|	--->	media [3]
-|		|	--->	skel  [4]
-|		|		|	---> image-source [5]
-|		|	homework*X*-name  [6]
-|	--->	...
-|	--->	...
-```
-
-The structure for an old or deprecated homework is as follows:
-```
-old
-|	--->	university_year [7]
-|		|	--->	old_homework*X*-name  [1]
-|		|		|	--->	checker  [2]
-|		|		|	--->	media	[3]
-|		|		|	--->	skel	[4]
-|		|		|		|	---> image-source [5]
-|		|		|	old_homework*X*-name  [6]
-|		|	--->	...
-|		|	--->	...
-|	--->	...
-|	--->	...
-```
-
-* **[1]** - folder with the homework name and contents (where *X* is the homework number)
-* **[2]** - folder with the checker [if need-be]
-* **[3]** - folder with images and diagrams [if need-be]
-* **[4]** - folder with the skeleton code [if need-be]
-* **[5]** - folder with sources of the images/diagrams [if need-be]
-* **[6]** - file with homework details and exercises - docuwiki code (**must** be the same as the folder name)
-* **[7]** - folder with the university year in which the homework was due
-
-## Contributing
-
-If you are interested in fixing issues, detailing laboratory content or just want to lend a helping hand,
-please see the document [How to Contribute](CONTRIBUTING.md), which covers the following:
-
-* [Coding Guidelines](CONTRIBUTING.md#coding-guidelines)
-* [Submitting pull requests](CONTRIBUTING.md#pull-requests)
-
-This organization has adopted the [Ethics regulation](http://wiki.cs.pub.ro/_media/studenti/licenta/regulament-comisie-de-etica-upb.pdf) and the [Code of Conduct for Students from the Faculty of Automation and Computers](http://wiki.cs.pub.ro/_media/studenti/licenta/cod-conduita-studenti-acs-.pdf). Failure to comply with or violate the rules set out in any of these documents will result in the sanctions imposed by UPB's internal regulations, such as reprimand, written warning, or expulsion from the University POLITEHNICA of Bucharest.
-
-## Feedback
-
-* Ask a question on [the Moodle instance of our university](http://cs.curs.pub.ro/).
-* Request a new feature on [GitHub](CONTRIBUTING.md).
-* File a bug in [GitHub Issues](https://github.com/oop-pub/teme/issues).
-
-## Related repositories
-
-* [Laboratories](https://github.com/oop-pub/laboratoare) - content related to laboratories
-* [Wiki](https://github.com/oop-pub/wiki) - content from the [docuwiki instance](http://elf.cs.pub.ro/poo/)
-
-## License
-
-Licensed under the [MIT](LICENSE) License.
 
 
+# Tema POO  - GwentStone
+
+<div align="center"><img src="https://tenor.com/view/witcher3-gif-9340436.gif" width="500px"></div>
+
+#### Assignment Link: [https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/tema](https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/tema)
+
+
+## Skel Structure
+
+* src/
+  * checker/ - checker files
+  * fileio/ - contains classes used to read data from the json files
+  * main/
+      * Main - the Main class runs the checker on your implementation. Add the entry point to your implementation in it. Run Main to test your implementation from the IDE or from command line.
+      * Test - run the main method from Test class with the name of the input file from the command line and the result will be written
+        to the out.txt file. Thus, you can compare this result with ref.
+* input/ - contains the tests in JSON format
+* ref/ - contains all reference output for the tests in JSON format
+
+## Tests
+
+1. test01_game_start - 4p
+2. test02_place_card - 5p
+3. test03_place_card_invalid - 5p
+4. test04_attack_card - 5p
+5. test05_attack_card_invalid - 5p
+6. test06_use_card_ability - 5p
+7. test07_use_card_ability_invalid - 5p
+8. test08_attack_hero - 5p
+9. test09_attack_hero_invalid - 5p
+10. test10_use_hero_ability_1 - 4p
+11. test11_use_hero_ability_2 - 4p
+12. test12_use_hero_ability_invalid_1 - 4p
+13. test13_use_hero_ability_invalid_2 - 4p
+14. test14_multiple_games_valid - 5p
+15. test15_multiple_games_invalid - 5p
+16. test16_big_game - 10p
+
+
+<div align="center"><img src="https://tenor.com/view/homework-time-gif-24854817.gif" width="500px"></div>

@@ -14,6 +14,8 @@ public class GameTable {
     private int currentPlayerTurn;
     private int round;
     private int turn;
+    private int herodeath;
+    private int affectedrow;
     private final int numRows = 4;
     private final int numCols = 5;
     public GameTable(Player playerOne, Player playerTwo, int currentPlayerTurn){
@@ -30,6 +32,8 @@ public class GameTable {
         this.currentPlayerTurn = currentPlayerTurn;
         this.round=1;
         this.turn=0;
+        this.herodeath=0;
+        this.affectedrow=-1;
     }
     public ArrayList<ArrayList<Minion>> getTable() {
         return table;
@@ -49,11 +53,11 @@ public class GameTable {
     public int getTurn() {
         return this.turn;
     }
-    public int getNumRows() {
-        return this.numRows;
+    public void setAffectedrow(int affectedrow) {
+        this.affectedrow = affectedrow;
     }
-    public int getNumCols() {
-        return this.numCols;
+    public int getAffectedrow(){
+        return this.affectedrow;
     }
     public void resetTurn(){
         for (int i = 0; i < numRows; i++) {
@@ -63,8 +67,16 @@ public class GameTable {
             }
         }
     }
-    public void resetFrozen(){
-        for (int i = 0; i < numRows; i++) {
+    public void resetFrozenplayerOne(){
+        for (int i = 2; i < numRows; i++) {
+            for (int j = 0; j < numCols; j++) {
+                if(this.table.get(i).get(j)!=null)
+                    this.table.get(i).get(j).setFrozen(0);
+            }
+        }
+    }
+    public void resetFrozenplayerTwo(){
+        for (int i = 0; i < numRows - 2; i++) {
             for (int j = 0; j < numCols; j++) {
                 if(this.table.get(i).get(j)!=null)
                     this.table.get(i).get(j).setFrozen(0);
@@ -78,15 +90,20 @@ public class GameTable {
         this.playerTwo.addMana(this.round);
         this.playerOne.addHand();
         this.playerTwo.addHand();
+        this.playerOne.getHero().setCanAttack(1);
+        this.playerTwo.getHero().setCanAttack(1);
         resetTurn();
-        resetFrozen();
     }
     public void endTurn() {
         this.turn++;
-        if(this.currentPlayerTurn==1)
+        if(this.currentPlayerTurn==1) {
             this.currentPlayerTurn = 2;
-        else
+            resetFrozenplayerOne();
+        }
+        else {
             this.currentPlayerTurn = 1;
+            resetFrozenplayerTwo();
+        }
         if (this.turn == 2) {
             StartRound();
         }
@@ -177,6 +194,20 @@ public class GameTable {
             return true;
         return false;
     }
+    public boolean AttackFriendRow(){
+        int rowfreind1,rowfreind2;
+        if(currentPlayerTurn==2){
+            rowfreind1=0;
+            rowfreind2=1;
+        }
+        else{
+            rowfreind1=3;
+            rowfreind2=2;
+        }
+        if(this.affectedrow==rowfreind1 || this.affectedrow==rowfreind2)
+            return true;
+        return false;
+    }
     public boolean AttackAgain(Coordinate coordatk){
         Minion minion=this.table.get(coordatk.getX()).get(coordatk.getY());
         return minion.getCanAttack() == 0;
@@ -228,22 +259,25 @@ public class GameTable {
         }
         return false;
     }
-    public void removeTableMinion(Minion miniondeath){
-        Coordinate coord=miniondeath.getCoordinate();
-        for(int j=coord.getY();j<numCols-1;j++){
-            this.table.get(coord.getX()).set(j, this.table.get(coord.getX()).get(j + 1));
+    public void removeTableMinion(Minion miniondeath) {
+        if (miniondeath != null) {
+            Coordinate coord = miniondeath.getCoordinate();
+            for (int j = coord.getY(); j < numCols-1; j++) {
+                this.table.get(coord.getX()).set(j, this.table.get(coord.getX()).get(j + 1));
+            }
+            this.table.get(coord.getX()).set(numCols - 1, null);
         }
     }
-    public void Damage(Minion minionatk,Minion miniondef){
+    public void DamageMinion(Minion minionatk,Minion miniondef){
         miniondef.decreaseHealth(minionatk.getAttackDamage());
         if(miniondef.getHealth()<1)
             removeTableMinion(miniondef);
     }
-    public void AttackNow(Coordinate coordatk,Coordinate coorddef){
+    public void AttackNowMinion(Coordinate coordatk,Coordinate coorddef){
         Minion minionatk=this.table.get(coordatk.getX()).get(coordatk.getY());
         Minion miniondef=this.table.get(coorddef.getX()).get(coorddef.getY());
         minionatk.setCanAttack(0);
-        Damage(minionatk,miniondef);
+        DamageMinion(minionatk,miniondef);
     }
     public void AbilityDisciple(Minion miniondef){
         miniondef.increaseHealth(2);
@@ -263,7 +297,7 @@ public class GameTable {
         if(miniondef.getHealth()<1)
             removeTableMinion(miniondef);
     }
-    public void AbilityNow(Coordinate coordatk,Coordinate coorddef){
+    public void AbilityNowMinion(Coordinate coordatk,Coordinate coorddef){
         Minion minionatk=this.table.get(coordatk.getX()).get(coordatk.getY());
         Minion miniondef=this.table.get(coorddef.getX()).get(coorddef.getY());
         minionatk.setCanAttack(0);
@@ -283,5 +317,112 @@ public class GameTable {
             default:
                 break;
         }
+    }
+    public void AbilityLordRoyce(){
+        for(int j=0;j<numCols;j++){
+            if(table.get(affectedrow).get(j)!=null) {
+                table.get(affectedrow).get(j).setFrozen(1);
+            }
+        }
+    }
+    public void AbilityEmpressThorina(){
+        int maxvalue=-1;
+        int maxidx=0;
+        for(int j=0;j<numCols;j++){
+            if(table.get(affectedrow).get(j)!=null) {
+                if (table.get(affectedrow).get(j).getHealth() >= maxvalue) {
+                    maxvalue = table.get(affectedrow).get(j).getHealth();
+                    maxidx = j;
+                }
+            }
+        }
+        removeTableMinion(table.get(affectedrow).get(maxidx));
+    }
+    public void AbilityKingMudface(){
+        for(int j=0;j<numCols;j++){
+            if(table.get(affectedrow).get(j)!=null) {
+                table.get(affectedrow).get(j).increaseHealth(1);
+            }
+        }
+    }
+    public void AbilityGeneralKocioraw(){
+        for(int j=0;j<numCols;j++){
+            if(table.get(affectedrow).get(j)!=null){
+            table.get(affectedrow).get(j).increaseAttackDamage(1);
+            }
+        }
+    }
+    public void AbilityNowHero(Hero hero){
+        hero.setCanAttack(0);
+        switch(hero.getName()){
+            case "Lord Royce":
+                AbilityLordRoyce();
+                break;
+            case "Empress Thorina":
+                AbilityEmpressThorina();
+                break;
+            case "King Mudface":
+                AbilityKingMudface();
+                break;
+            case "General Kocioraw":
+                AbilityGeneralKocioraw();
+                break;
+            default:
+                break;
+        }
+    }
+    public boolean AttackHeroWithTankActive(Coordinate coordatk){
+            int isATank=0;
+            for(int i=0;i<numRows;i++){
+                for(int j=0;j<numCols;j++){
+                    Coordinate coordinate=new Coordinate(i,j);
+                    if(this.table.get(coordinate.getX()).get(coordinate.getY())!=null)
+                        if(!AttackFriend(coordatk,coordinate) && isTank(coordinate)){
+                            isATank++;
+                        }
+                }
+            }
+            if(isATank!=0)
+                return true;
+            return false;
+    }
+    public int getHeroDeath(){
+        return this.herodeath;
+    }
+    public void DamageHero(Minion minionatk, Hero hero){
+        hero.decreaseHealth(minionatk.getAttackDamage());
+        if(hero.getHealth()<1)
+            this.herodeath=1;
+    }
+    public void AttackNowHero(Coordinate coordatk){
+        Hero hero;
+        if(this.currentPlayerTurn==1)
+            hero=this.playerTwo.getHero();
+        else
+            hero=this.playerOne.getHero();
+        Minion minionatk=this.table.get(coordatk.getX()).get(coordatk.getY());
+        minionatk.setCanAttack(0);
+        DamageHero(minionatk,hero);
+    }
+    public void decreaseManaAfterAbilityHero(){
+        if(this.currentPlayerTurn==1)
+            this.playerOne.removeMana(this.playerOne.getHero().getMana());
+        else
+            this.playerTwo.removeMana(this.playerTwo.getHero().getMana());
+    }
+
+    public ArrayNode FreezetoJson() {
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode tableJson = mapper.createArrayNode();
+
+        for (int i = 0; i < this.table.size(); i++) {
+            for (Card card : this.table.get(i)) {
+                if (card != null && card.getFrozen() == 1) {
+                    tableJson.add(card.toJson());
+                }
+            }
+        }
+
+        return tableJson;
     }
 }

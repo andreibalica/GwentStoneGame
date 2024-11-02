@@ -44,6 +44,7 @@ public class Game {
             Coordinate coorddef;
             Minion minionatk;
             Minion miniondef;
+            Hero hero;
             switch (action.getCommand()){
                 case "getPlayerDeck":
                     playerIdx = action.getPlayerIdx();
@@ -141,7 +142,7 @@ public class Game {
                         actionResult.put("error", "Attacked card is not of type 'Tank'.");
                         output.add(actionResult);
                     }else{
-                        table.AttackNow(coordatk,coorddef);
+                        table.AttackNowMinion(coordatk,coorddef);
                     }
                     }
                     break;
@@ -179,7 +180,7 @@ public class Game {
                             actionResult.put("error", "Attacked card is not of type 'Tank'.");
                             output.add(actionResult);
                         }else{
-                            table.AbilityNow(coordatk,coorddef);
+                            table.AbilityNowMinion(coordatk,coorddef);
                         }
                     }
                     break;
@@ -198,6 +199,76 @@ public class Game {
                         actionResult.put("output", "No card available at that position.");
                         output.add(actionResult);
                     }
+                    break;
+
+                case "useAttackHero":
+                    coordatk=action.getCardAttacker();
+                    minionatk=table.getTable().get(coordatk.getX()).get(coordatk.getY());
+                    if(minionatk!=null){
+                        if(table.isFrozen(coordatk)) {
+                            actionResult.put("command", "useAttackHero");
+                            actionResult.set("cardAttacker", coordatk.toJson());
+                            actionResult.put("error", "Attacker card is frozen.");
+                            output.add(actionResult);
+                     }else if(table.AttackAgain(coordatk)) {
+                            actionResult.put("command", "useAttackHero");
+                            actionResult.set("cardAttacker", coordatk.toJson());
+                            actionResult.put("error", "Attacker card has already attacked this turn.");
+                            output.add(actionResult);
+                     }else if(table.AttackHeroWithTankActive(coordatk)){
+                            actionResult.put("command", "useAttackHero");
+                            actionResult.set("cardAttacker", coordatk.toJson());
+                            actionResult.put("error", "Attacked card is not of type 'Tank'.");
+                            output.add(actionResult);
+                     }else{
+                            table.AttackNowHero(coordatk);
+                            if(table.getHeroDeath()==1){
+                                if(table.getCurrentPlayerTurn()==1){
+                                actionResult.put("gameEnded", "Player one killed the enemy hero.");
+                                output.add(actionResult);
+                                }else{
+                                    actionResult.put("gameEnded", "Player two killed the enemy hero.");
+                                    output.add(actionResult);
+                                }
+                            }
+                     }
+                    }
+                    break;
+
+                case "useHeroAbility":
+                    table.setAffectedrow(action.getAffectedRow());
+                    hero=table.getHeroPlayer(table.getCurrentPlayerTurn());
+                    if(hero!=null){
+                        if(hero.getMana()>table.getManaPlayer(table.getCurrentPlayerTurn())){
+                            actionResult.put("command", "useHeroAbility");
+                            actionResult.put("affectedRow", table.getAffectedrow());
+                            actionResult.put("error", "Not enough mana to use hero's ability.");
+                            output.add(actionResult);
+                        }else if(hero.getCanAttack()==0){
+                            actionResult.put("command", "useHeroAbility");
+                            actionResult.put("affectedRow", table.getAffectedrow());
+                            actionResult.put("error", "Hero has already attacked this turn.");
+                            output.add(actionResult);
+                        }else if((hero.getName().equals("Lord Royce") || hero.getName().equals("Empress Thorina")) && table.AttackFriendRow()){
+                            actionResult.put("command", "useHeroAbility");
+                            actionResult.put("affectedRow", table.getAffectedrow());
+                            actionResult.put("error", "Selected row does not belong to the enemy.");
+                            output.add(actionResult);
+                        }else if((hero.getName().equals("General Kocioraw") || hero.getName().equals("King Mudface")) && !table.AttackFriendRow()){
+                            actionResult.put("command", "useHeroAbility");
+                            actionResult.put("affectedRow", table.getAffectedrow());
+                            actionResult.put("error", "Selected row does not belong to the current player.");
+                            output.add(actionResult);
+                        }else{
+                            table.AbilityNowHero(hero);
+                            table.decreaseManaAfterAbilityHero();
+                        }
+                    }
+                    break;
+                case "getFrozenCardsOnTable":
+                    actionResult.put("command", "getFrozenCardsOnTable");
+                    actionResult.set("output", table.FreezetoJson());
+                    output.add(actionResult);
                     break;
                 default:
                     break;

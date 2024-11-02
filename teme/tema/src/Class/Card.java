@@ -120,6 +120,9 @@ public class Card {
     public void increaseHealth(int amount) {
         this.health += amount;
     }
+    public void increaseAttackDamage(int atk) {
+        this.attackDamage += atk;
+    }
     public void decreaseAttackDamage(int atk){
         this.attackDamage -= atk;
         if(this.attackDamage<0)

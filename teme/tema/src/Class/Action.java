@@ -53,4 +53,7 @@ public class Action {
     public Coordinate getCardAttacked() {
         return this.cardAttacked;
     }
+    public int getAffectedRow() {
+        return this.affectedRow;
+    }
 }

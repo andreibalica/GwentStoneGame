@@ -1,38 +1,23 @@
 package main;
 
 import checker.Checker;
-import Class.Card;
-import Class.Deck;
-import Class.Hero;
-import Class.Minion;
-import Class.Game;
-import Class.StartGame;
-import Class.Action;
-import Class.Player;
-
-import java.util.ArrayList;
-
+import checker.CheckerConstants;
+import classpackage.Game;
+import classpackage.Player;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import checker.CheckerConstants;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import fileio.Input;
 import fileio.DecksInput;
-import fileio.CardInput;
-import fileio.ActionsInput;
-import fileio.Coordinates;
 import fileio.GameInput;
-import fileio.StartGameInput;
+import fileio.Input;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Random;
 
 /**
  * The entry point to this homework. It runs the checker that tests your implentation.
@@ -116,9 +101,9 @@ public final class Main {
         playerTwo.setDecks(playerTwoDecks);
 
         ArrayList<GameInput> games = inputData.getGames();
-        for (int i=0;i<games.size();i++) {
+        for (int i = 0; i < games.size(); i++) {
             Game game = new Game(games.get(i));
-            game.RunGame(playerOne, playerTwo, output);
+            game.runGame(playerOne, playerTwo, i + 1, output);
         }
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();

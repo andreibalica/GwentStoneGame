@@ -1,4 +1,4 @@
-package Class;
+package classpackage;
 
 
 import fileio.StartGameInput;
@@ -13,7 +13,11 @@ public class StartGame {
     private Hero playerOneHero;
     private Hero playerTwoHero;
     private int startingPlayer;
-    public StartGame(StartGameInput startGameInput) {
+
+    /**
+     * @param startGameInput
+     */
+    public StartGame(final StartGameInput startGameInput) {
         this.playerOneDeckIdx = startGameInput.getPlayerOneDeckIdx();
         this.playerTwoDeckIdx = startGameInput.getPlayerTwoDeckIdx();
         this.shuffleSeed = startGameInput.getShuffleSeed();
@@ -23,37 +27,78 @@ public class StartGame {
         this.startingPlayer = startGameInput.getStartingPlayer();
     }
 
-    public void SetUpGame(StartGame startGame, Player playerOne, Player playerTwo) {
+    /**
+     * @param startGame
+     * @param playerOne
+     * @param playerTwo
+     */
+    public void setUpGame(final StartGame startGame, final Player playerOne,
+                          final Player playerTwo) {
         int playerOneDeckIdx = startGame.getPlayerOneDeckIdx();
         int playerTwoDeckIdx = startGame.getPlayerTwoDeckIdx();
-        playerOne.setDeck(playerOne, playerOneDeckIdx);
-        playerTwo.setDeck(playerTwo, playerTwoDeckIdx);
         playerOne.setHero(startGame.getPlayerOneHero());
         playerTwo.setHero(startGame.getPlayerTwoHero());
-        Collections.shuffle(playerOne.getDeck().getCards(), new Random(startGame.getShuffleSeed()));
-        Collections.shuffle(playerTwo.getDeck().getCards(), new Random(startGame.getShuffleSeed()));
+        Deck deckplayerOne = new Deck(playerOne.getDecks().get((playerOneDeckIdx)));
+        Deck deckplayerTwo = new Deck(playerTwo.getDecks().get(playerTwoDeckIdx));
+        Collections.shuffle(deckplayerOne.getCards(), new Random(startGame.getShuffleSeed()));
+        Collections.shuffle(deckplayerTwo.getCards(), new Random(startGame.getShuffleSeed()));
+        playerOne.setDeck(deckplayerOne);
+        playerTwo.setDeck(deckplayerTwo);
+        while (playerOne.getHand().getNrCardsInDeck() > 0) {
+            playerOne.removeHand(0);
+        }
+        while (playerTwo.getHand().getNrCardsInDeck() > 0) {
+            playerTwo.removeHand(0);
+        }
         playerOne.addHand();
         playerTwo.addHand();
+        playerOne.setMana(0);
+        playerTwo.setMana(0);
         playerOne.addMana(1);
         playerTwo.addMana(1);
     }
+
+    /**
+     * @return
+     */
     public int getPlayerOneDeckIdx() {
         return playerOneDeckIdx;
     }
+
+    /**
+     * @return
+     */
     public int getPlayerTwoDeckIdx() {
         return playerTwoDeckIdx;
     }
+
+    /**
+     * @return
+     */
     public int getShuffleSeed() {
         return shuffleSeed;
     }
+
+    /**
+     * @return
+     */
     public Hero getPlayerOneHero() {
         return playerOneHero;
     }
+
+    /**
+     * @return
+     */
     public Hero getPlayerTwoHero() {
         return playerTwoHero;
     }
+
+    /**
+     * @return
+     */
     public int getStartingPlayer() {
         return startingPlayer;
     }
+
 }
 

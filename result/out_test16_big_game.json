@@ -220,4 +220,13 @@
     "attackDamage" : 5,
     "health" : 3
   } ]
+}, {
+  "command" : "getTotalGamesPlayed",
+  "output" : 1
+}, {
+  "command" : "getPlayerTwoWins",
+  "output" : 0
+}, {
+  "command" : "getPlayerOneWins",
+  "output" : 1
 } ]

@@ -1,11 +1,8 @@
-package Class;
+package classpackage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.Coordinates;
-
-import java.util.Objects;
 
 public class Coordinate {
     private int x, y;
@@ -19,50 +16,89 @@ public class Coordinate {
         this.y = 0;
     }
 
-    public Coordinate(int x, int y) {
+    /**
+     * @param x
+     * @param y
+     */
+    public Coordinate(final int x, final int y) {
         this.x = x;
         this.y = y;
     }
-    public Coordinate(Coordinate coord) {
+
+    /**
+     * @param coord
+     */
+    public Coordinate(final Coordinate coord) {
         this.x = coord.x;
         this.y = coord.y;
     }
-    public Coordinate(Coordinates coordinatesInput) {
+
+    /**
+     * @param coordinatesInput
+     */
+    public Coordinate(final Coordinates coordinatesInput) {
         this.x = coordinatesInput.getX();
         this.y = coordinatesInput.getY();
     }
 
-    public void setCoordinates(int x, int y) {
+    /**
+     * @param x
+     * @param y
+     */
+    public void setCoordinate(final int x, final int y) {
         this.x = x;
         this.y = y;
     }
 
+    /**
+     * @return
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * @return
+     */
     public int getY() {
         return y;
     }
 
-    private boolean isTypeOne(Minion minion) {
-        String name = minion.getName();
-        return name.equals("Goliath") || name.equals("Miraj") || name.equals("Warden") || name.equals("The Ripper");
+    public void setX(final int x) {
+        this.x = x;
     }
 
-    private boolean isTypeTwo(Minion minion) {
-        String name = minion.getName();
-        return name.equals("The Cursed One") || name.equals("Berserker") || name.equals("Sentinel") || name.equals("Discipline");
+    public void setY(final int y) {
+        this.y = y;
     }
 
-    public void MinionPlacement(int handIdx, GameTable table) {
+    /**
+     * @param minion
+     * @return
+     */
+    private boolean isTypeOne(final Minion minion) {
+        String name = minion.getName();
+        return name.equals("Goliath") || name.equals("Miraj") || name.equals("Warden")
+                || name.equals("The Ripper");
+    }
+
+    /**
+     * @param handIdx
+     * @param table
+     */
+    public void minionPlacement(final int handIdx, final GameTable table) {
         Minion minion = getMinionFromHand(handIdx, table);
         Coordinate placement = getPlacementCoordinate(minion, table);
         this.x = placement.getX();
         this.y = placement.getY();
     }
 
-    private Minion getMinionFromHand(int handIdx, GameTable table) {
+    /**
+     * @param handIdx
+     * @param table
+     * @return
+     */
+    private Minion getMinionFromHand(final int handIdx, final GameTable table) {
         if (table.getCurrentPlayerTurn() == 1) {
             return table.getPlayerOne().getHand().getCards().get(handIdx);
         } else {
@@ -70,7 +106,12 @@ public class Coordinate {
         }
     }
 
-    private Coordinate getPlacementCoordinate(Minion minion, GameTable table) {
+    /**
+     * @param minion
+     * @param table
+     * @return
+     */
+    private Coordinate getPlacementCoordinate(final Minion minion, final GameTable table) {
         int row;
         if (table.getCurrentPlayerTurn() == 1) {
             if (isTypeOne(minion)) {
@@ -88,7 +129,12 @@ public class Coordinate {
         return findEmptySlotInRow(table, row);
     }
 
-    private Coordinate findEmptySlotInRow(GameTable table, int row) {
+    /**
+     * @param table
+     * @param row
+     * @return
+     */
+    private Coordinate findEmptySlotInRow(final GameTable table, final int row) {
         for (int j = 0; j < table.getTable().get(row).size(); j++) {
             if (table.getTable().get(row).get(j) == null) {
                 return new Coordinate(row, j);
@@ -96,12 +142,16 @@ public class Coordinate {
         }
         return new Coordinate(-1, -1);
     }
+
+    /**
+     * @return
+     */
     public ObjectNode toJson() {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode coordNode = mapper.createObjectNode();
 
         coordNode.put("x", this.x);
-        coordNode.put("y",this.y);
+        coordNode.put("y", this.y);
 
         return coordNode;
     }

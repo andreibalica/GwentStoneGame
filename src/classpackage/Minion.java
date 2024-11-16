@@ -1,22 +1,33 @@
-package Class;
-
+package classpackage;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.CardInput;
 
-import java.util.ArrayList;
-
 public class Minion extends Card {
 
-    public Minion(){
+    public Minion() {
         super();
     }
 
-    public Minion(CardInput card) {
+    /**
+     * @param card
+     */
+    public Minion(final CardInput card) {
         super(card);
     }
-    public Minion(Minion minion) {
+
+    /**
+     * @param minion
+     */
+    public Minion(final Minion minion) {
         super();
+        copyMinionProperties(minion);
+    }
+
+    /**
+     * @param minion
+     */
+    private void copyMinionProperties(final Minion minion) {
         this.setName(minion.getName());
         this.setMana(minion.getMana());
         this.setDescription(minion.getDescription());
@@ -25,7 +36,9 @@ public class Minion extends Card {
         this.setHealth(minion.getHealth());
     }
 
-
+    /**
+     * @return
+     */
     @Override
     public ObjectNode toJson() {
         ObjectNode minionNode = super.toJson();
